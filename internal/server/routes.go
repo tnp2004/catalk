@@ -8,12 +8,12 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/api/v1/", s.ApiV1Mux())
+	mux.Handle("/api/v1/", s.apiV1())
 
 	return mux
 }
 
-func (s *Server) ApiV1Mux() http.Handler {
+func (s *Server) apiV1() http.Handler {
 	v1 := http.NewServeMux()
 	v1.Handle("/", http.HandlerFunc(s.HelloWorldHandler))
 	v1.Handle("/health", http.HandlerFunc(s.healthHandler))
@@ -30,7 +30,7 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
 
-	_, _ = w.Write(jsonResp)
+	w.Write(jsonResp)
 }
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,5 +40,5 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
 
-	_, _ = w.Write(jsonResp)
+	w.Write(jsonResp)
 }
