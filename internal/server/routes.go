@@ -8,11 +8,17 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", s.HelloWorldHandler)
-
-	mux.HandleFunc("/health", s.healthHandler)
+	mux.Handle("/api/v1/", s.ApiV1Mux())
 
 	return mux
+}
+
+func (s *Server) ApiV1Mux() http.Handler {
+	v1 := http.NewServeMux()
+	v1.Handle("/", http.HandlerFunc(s.HelloWorldHandler))
+	v1.Handle("/health", http.HandlerFunc(s.healthHandler))
+
+	return http.StripPrefix("/api/v1", v1)
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
