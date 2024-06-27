@@ -2,6 +2,7 @@ package ai
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -11,30 +12,45 @@ import (
 
 var clientInstance *genai.Client
 
-func TextGemini(msg string) *genai.GenerateContentResponse {
+func TextToGemini(body *GeminiTextBody) (*GeminiResponse, error) {
+	resp, err := sendMsgToGemini(body.Message)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("%#v", resp.Candidates[0].Content.Parts[0])
+	return nil, nil
+}
+
+func sendMsgToGemini(msg string) (*genai.GenerateContentResponse, error) {
 	ctx := context.Background()
 
-	client := newAiClient(ctx)
+	client, err := newAiClient(ctx)
+	if err != nil {
+		return nil, err
+	}
 	model := client.GenerativeModel("gemini-1.5-flash")
 
 	resp, err := model.GenerateContent(ctx, genai.Text(msg))
 	if err != nil {
 		log.Printf("error generate content. Err: %s", err.Error())
+		return nil, err
 	}
 
-	return resp
+	return resp, nil
 }
 
-func newAiClient(ctx context.Context) *genai.Client {
+func newAiClient(ctx context.Context) (*genai.Client, error) {
 	if clientInstance != nil {
-		return clientInstance
+		return clientInstance, nil
 	}
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GOOGLE_API_KEY")))
 	if err != nil {
-		log.Printf("error text gemini. Err: %s", err.Error())
+		log.Printf("error new gemini client. Err: %s", err.Error())
+		return nil, err
 	}
 	clientInstance = client
 
-	return clientInstance
+	return clientInstance, nil
 }
