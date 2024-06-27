@@ -17,8 +17,8 @@ func TextToGemini(body *GeminiTextBody) (*GeminiResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(resp.Candidates[0].Content.Parts[0])
 
-	fmt.Printf("%#v", resp.Candidates[0].Content.Parts[0])
 	return nil, nil
 }
 
@@ -34,7 +34,7 @@ func sendMsgToGemini(msg string) (*genai.GenerateContentResponse, error) {
 	resp, err := model.GenerateContent(ctx, genai.Text(msg))
 	if err != nil {
 		log.Printf("error generate content. Err: %s", err.Error())
-		return nil, err
+		return nil, fmt.Errorf("generate content error: %s", err.Error())
 	}
 
 	return resp, nil
@@ -48,7 +48,7 @@ func newAiClient(ctx context.Context) (*genai.Client, error) {
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GOOGLE_API_KEY")))
 	if err != nil {
 		log.Printf("error new gemini client. Err: %s", err.Error())
-		return nil, err
+		return nil, fmt.Errorf("new gemini client error: %s", err.Error())
 	}
 	clientInstance = client
 
