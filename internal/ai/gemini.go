@@ -2,7 +2,6 @@ package ai
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -12,7 +11,7 @@ import (
 
 var clientInstance *genai.Client
 
-func TextGemini(msg string) {
+func TextGemini(msg string) *genai.GenerateContentResponse {
 	ctx := context.Background()
 
 	client := newAiClient(ctx)
@@ -23,7 +22,7 @@ func TextGemini(msg string) {
 		log.Printf("error generate content. Err: %s", err.Error())
 	}
 
-	fmt.Printf("%#v", resp)
+	return resp
 }
 
 func newAiClient(ctx context.Context) *genai.Client {
@@ -35,6 +34,7 @@ func newAiClient(ctx context.Context) *genai.Client {
 	if err != nil {
 		log.Printf("error text gemini. Err: %s", err.Error())
 	}
+	clientInstance = client
 
-	return client
+	return clientInstance
 }
