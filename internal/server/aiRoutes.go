@@ -15,6 +15,7 @@ func (s *Server) ChatWithGeminiHandler(w http.ResponseWriter, r *http.Request) {
 	reqBody := new(ai.GeminiTextBody)
 	if err := json.Unmarshal(body, &reqBody); err != nil {
 		log.Printf("error unmarshal body. Err: %s", err.Error())
+		res.ErrorResponse(w, http.StatusInternalServerError, err)
 	}
 
 	resp, err := ai.TextToGemini(reqBody)
