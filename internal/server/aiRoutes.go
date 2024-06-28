@@ -3,7 +3,6 @@ package server
 import (
 	"catalk/internal/ai"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -21,5 +20,10 @@ func (s *Server) ChatWithGeminiHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	fmt.Printf("%#v", resp)
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	w.Write(jsonResp)
 }
