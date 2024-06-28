@@ -1,4 +1,4 @@
-package res
+package utils
 
 import (
 	"encoding/json"
@@ -17,24 +17,26 @@ type errorResponse struct {
 
 func SuccessResponse(w http.ResponseWriter, status int, data any) {
 	w.WriteHeader(status)
+
 	resp := &response{Data: data}
-	jsonResp, err := json.MarshalIndent(resp, "", "\t")
-	if err != nil {
+
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "	")
+	if err := encoder.Encode(resp); err != nil {
 		log.Printf("error marshal response body. Err: %s", err.Error())
 		ErrorResponse(w, http.StatusInternalServerError, fmt.Errorf("marshal body error"))
 	}
-
-	w.Write(jsonResp)
 }
 
 func ErrorResponse(w http.ResponseWriter, status int, err error) {
 	w.WriteHeader(status)
-	errResp := &errorResponse{Message: err.Error()}
-	jsonResp, err := json.MarshalIndent(errResp, "", "\t")
-	if err != nil {
+
+	resp := &errorResponse{Message: err.Error()}
+
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "	")
+	if err := encoder.Encode(resp); err != nil {
 		log.Printf("error marshal error response body. Err: %s", err.Error())
 		ErrorResponse(w, http.StatusInternalServerError, fmt.Errorf("marshal body error"))
 	}
-
-	w.Write(jsonResp)
 }
