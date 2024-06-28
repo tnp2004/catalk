@@ -2,6 +2,7 @@ package server
 
 import (
 	"catalk/internal/ai"
+	"catalk/internal/res"
 	"encoding/json"
 	"io"
 	"log"
@@ -18,12 +19,8 @@ func (s *Server) ChatWithGeminiHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := ai.TextToGemini(reqBody)
 	if err != nil {
-		log.Println(err.Error())
-	}
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Printf("error marshal response body. Err: %s", err.Error())
+		res.ErrorResponse(w, http.StatusInternalServerError, err)
 	}
 
-	w.Write(jsonResp)
+	res.SuccessResponse(w, http.StatusOK, resp)
 }
