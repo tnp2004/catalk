@@ -16,6 +16,7 @@ type errorResponse struct {
 }
 
 func SuccessResponse(w http.ResponseWriter, status int, data any) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
 	resp := &response{Data: data}
@@ -29,6 +30,7 @@ func SuccessResponse(w http.ResponseWriter, status int, data any) {
 }
 
 func ErrorResponse(w http.ResponseWriter, status int, err error) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
 	resp := &errorResponse{Message: err.Error()}
