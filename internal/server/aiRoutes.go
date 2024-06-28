@@ -22,7 +22,7 @@ func (s *Server) ChatWithGeminiHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		log.Println(err.Error())
+		log.Printf("error marshal response body. Err: %s", err.Error())
 	}
 
 	w.Write(jsonResp)
