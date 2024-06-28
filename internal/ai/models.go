@@ -5,5 +5,5 @@ type GeminiTextBody struct {
 }
 
 type GeminiResponse struct {
-	Message string `json:"message"`
+	Message any `json:"message"`
 }

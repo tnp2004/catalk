@@ -13,13 +13,14 @@ import (
 var clientInstance *genai.Client
 
 func TextToGemini(body *GeminiTextBody) (*GeminiResponse, error) {
-	resp, err := sendMsgToGemini(body.Message)
+	contentResp, err := sendMsgToGemini(body.Message)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(resp.Candidates[0].Content.Parts[0])
 
-	return nil, nil
+	resp := &GeminiResponse{Message: contentResp.Candidates[0].Content.Parts[0]}
+
+	return resp, nil
 }
 
 func sendMsgToGemini(msg string) (*genai.GenerateContentResponse, error) {
