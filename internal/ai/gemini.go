@@ -41,26 +41,26 @@ func sendMsgToGemini(req *GeminiRequest) ([]*MessageInfo, error) {
 	msgHistoryContents := convertMessageHistoryToParts(req.MessageHistory)
 	cs.History = append(cs.History, msgHistoryContents...)
 
-	resp, err := cs.SendMessage(ctx, genai.Text(req.NewUserMessage))
+	contentResp, err := cs.SendMessage(ctx, genai.Text(req.NewUserMessage))
 	if err != nil {
 		log.Printf("error generate content. Err: %s", err.Error())
 		return nil, fmt.Errorf("generate content error: %s", err.Error())
 	}
-	r := make([]*MessageInfo, 0)
-	r = append(r, &MessageInfo{
+	resp := make([]*MessageInfo, 0)
+	resp = append(resp, &MessageInfo{
 		Message: req.NewUserMessage,
 		Role:    "user",
 	})
-	for _, part := range resp.Candidates[0].Content.Parts {
+	for _, part := range contentResp.Candidates[0].Content.Parts {
 		if txt, ok := part.(genai.Text); ok {
-			r = append(r, &MessageInfo{
+			resp = append(resp, &MessageInfo{
 				Message: string(txt),
-				Role:    resp.Candidates[0].Content.Role,
+				Role:    contentResp.Candidates[0].Content.Role,
 			})
 		}
 	}
 
-	return r, nil
+	return resp, nil
 }
 
 func newAiClient(ctx context.Context) (*genai.Client, error) {
