@@ -9,7 +9,12 @@ import (
 	"os"
 )
 
+var instructionsInstance *instructions.CatInstructions
+
 func ReadInstructions(path string) (*instructions.CatInstructions, error) {
+	if instructionsInstance != nil {
+		return instructionsInstance, nil
+	}
 	jsonFile, err := os.Open(path)
 	if err != nil {
 		log.Printf("error open instruction file. Err: %s", err.Error())
@@ -21,12 +26,13 @@ func ReadInstructions(path string) (*instructions.CatInstructions, error) {
 		log.Printf("error io read. Err: %s", err.Error())
 		return nil, fmt.Errorf("read file failed")
 	}
-	instructions := new(instructions.CatInstructions)
-	if err := json.Unmarshal(byteVal, &instructions); err != nil {
+	ins := new(instructions.CatInstructions)
+	if err := json.Unmarshal(byteVal, &ins); err != nil {
 		log.Printf("error unmarshal body. Err: %s", err.Error())
 		return nil, fmt.Errorf("unmarshal failed")
 	}
+	instructionsInstance = ins
 
-	return instructions, nil
+	return instructionsInstance, nil
 
 }
