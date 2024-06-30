@@ -19,10 +19,6 @@ type GeminiResponse struct {
 	ResponseMessage   any            `json:"responseMessage"`
 }
 
-var catBreedsMap = map[string]string{
-	"persian": "persian",
-}
-
 func convertMessageHistoryToParts(msgInfo []*MessageInfo) []*genai.Content {
 	contents := make([]*genai.Content, 0)
 

@@ -1,6 +1,7 @@
 package ai
 
 import (
+	"catalk/instructions"
 	"catalk/utils"
 	"context"
 	"fmt"
@@ -14,19 +15,18 @@ import (
 var clientInstance *genai.Client
 
 func TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error) {
-	fmt.Println(breed)
-	breed, ok := catBreedsMap[breed]
+	breed, ok := instructions.CatBreedsMap[breed]
 	if !ok {
 		log.Printf("error %s breed isn't match", breed)
 		return nil, fmt.Errorf("%s breed isn't match", breed)
 	}
 
-	instructions, err := utils.ReadInstructions("instructions/cat.json")
+	instructions, err := utils.ReadInstructions("instructions/json/cat.json")
 	if err != nil {
 		return nil, err
 	}
 
-	breedIns, ok := instructions.Breeds[breed]
+	breedIns, ok := instructions.BreedsInstruction[breed]
 	if !ok {
 		log.Printf("error instruction of %s breed not found", breed)
 		return nil, fmt.Errorf("%s instruction not found", breed)

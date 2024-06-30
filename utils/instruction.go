@@ -9,9 +9,9 @@ import (
 	"os"
 )
 
-var instructionsInstance *instructions.CatInstructions
+var instructionsInstance *instructions.Instructions
 
-func ReadInstructions(path string) (*instructions.CatInstructions, error) {
+func ReadInstructions(path string) (*instructions.Instructions, error) {
 	if instructionsInstance != nil {
 		return instructionsInstance, nil
 	}
@@ -26,7 +26,7 @@ func ReadInstructions(path string) (*instructions.CatInstructions, error) {
 		log.Printf("error io read. Err: %s", err.Error())
 		return nil, fmt.Errorf("read file failed")
 	}
-	ins := new(instructions.CatInstructions)
+	ins := new(instructions.Instructions)
 	if err := json.Unmarshal(byteVal, &ins); err != nil {
 		log.Printf("error unmarshal body. Err: %s", err.Error())
 		return nil, fmt.Errorf("unmarshal failed")
