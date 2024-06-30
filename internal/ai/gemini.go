@@ -1,6 +1,7 @@
 package ai
 
 import (
+	"catalk/utils"
 	"context"
 	"fmt"
 	"log"
@@ -12,9 +13,26 @@ import (
 
 var clientInstance *genai.Client
 
-func TextToGemini(req *GeminiRequest) (*GeminiResponse, error) {
-	contentResp, err := sendMsgToGemini(req)
+func TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error) {
+	fmt.Println(breed)
+	breed, ok := catBreedsMap[breed]
+	if !ok {
+		log.Printf("error %s breed isn't match", breed)
+		return nil, fmt.Errorf("%s breed isn't match", breed)
+	}
 
+	instructions, err := utils.ReadInstructions("instructions/cat.json")
+	if err != nil {
+		return nil, err
+	}
+
+	breedIns, ok := instructions.Breeds[breed]
+	if !ok {
+		log.Printf("error instruction of %s breed not found", breed)
+		return nil, fmt.Errorf("%s instruction not found", breed)
+	}
+
+	contentResp, err := sendMsgToGemini(req, instructions.MainInstruction, breedIns)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +46,7 @@ func TextToGemini(req *GeminiRequest) (*GeminiResponse, error) {
 	return resp, nil
 }
 
-func sendMsgToGemini(req *GeminiRequest) ([]*MessageInfo, error) {
+func sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction string) ([]*MessageInfo, error) {
 	ctx := context.Background()
 
 	client, err := newAiClient(ctx)
@@ -37,6 +55,9 @@ func sendMsgToGemini(req *GeminiRequest) ([]*MessageInfo, error) {
 	}
 
 	model := client.GenerativeModel("gemini-1.5-flash")
+	model.SystemInstruction = &genai.Content{
+		Parts: []genai.Part{genai.Text(mainInstruction), genai.Text(subInstruction)},
+	}
 	cs := model.StartChat()
 	msgHistoryContents := convertMessageHistoryToParts(req.MessageHistory)
 	cs.History = append(cs.History, msgHistoryContents...)

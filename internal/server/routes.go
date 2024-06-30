@@ -17,7 +17,7 @@ func (s *Server) apiV1() http.Handler {
 	v1 := http.NewServeMux()
 	v1.Handle("/", http.HandlerFunc(s.HelloWorldHandler))
 	v1.Handle("/health", http.HandlerFunc(s.healthHandler))
-	v1.Handle("POST /gemini/text", http.HandlerFunc(s.ChatWithGeminiHandler))
+	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
 	return http.StripPrefix("/api/v1", v1)
 }
