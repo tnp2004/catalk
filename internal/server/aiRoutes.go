@@ -16,7 +16,7 @@ func (s *Server) ChatWithGeminiHandler(w http.ResponseWriter, r *http.Request) {
 	breed := r.PathValue("breed")
 
 	if err := json.Unmarshal(body, &reqBody); err != nil {
-		log.Printf("error unmarshal body. Err: %s", err.Error())
+		log.Printf("error handling JSON marshal. Err: %s", err.Error())
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
