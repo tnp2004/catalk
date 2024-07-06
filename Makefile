@@ -59,3 +59,7 @@ watch:
 	fi
 
 .PHONY: all build run test clean
+
+# Web
+astro-dev:
+	@npm --prefix ./cmd/web run astro dev
