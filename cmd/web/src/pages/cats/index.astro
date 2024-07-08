@@ -1,11 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Card from "../../components/Card.astro";
+
+const res: Promise<ResponseData<string[]>> = await(await fetch("http://localhost:8080/api/v1/cats/breeds")).json()
+const breedsRes = await res
 ---
 
 <Layout>
-    <ul class="p-1">
-        <Card breed="persian" />
-        <Card breed="ragdoll" />
+    <ul class="p-1 w-1/2 mx-auto flex flex-wrap">
+        {breedsRes.data.map(v => <Card breed={v} />)}
     </ul>
 </Layout>

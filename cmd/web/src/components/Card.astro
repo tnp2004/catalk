@@ -4,11 +4,15 @@ interface Props {
 }
 
 const { breed } = Astro.props
+
+const camelToWords = (camel: string): string => {
+    return camel.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^([a-z])/, (match, p1) => p1.toUpperCase())
+}
 ---
 
 <li class="border-2 border-slate-700 shadow-md w-44 h-max rounded text-center text-slate-800 bg-yellow-100 hover:cursor-pointer m-1">
 	<a href=`/cats/${breed}/chat`>
-		<label class="font-bold block bg-amber-200" for="name">{breed}</label>
+		<label class="font-bold block bg-amber-200" for="name">{camelToWords(breed)}</label>
 		<img class="w-1/2 mx-auto p-1" src={`./catsIcon/${breed}.png`} alt="cat-img">
 	</a>
 </li>
