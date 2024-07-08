@@ -2,11 +2,10 @@
 import Layout from "../../../layouts/Layout.astro";
 import type { GetStaticPaths } from "astro";
 
-export const getStaticPaths = (() => {
-    return [
-        {params: {breed: "persian"}},
-        {params: {breed: "ragdoll"}}
-    ];
+export const getStaticPaths = (async () => {
+    const res: Promise<ResponseData<string[]>> = await(await fetch("http://localhost:8080/api/v1/cats/breeds")).json()
+    const breedsRes = await res
+    return breedsRes.data.map(v => ({params: {breed: v}}))
 }) satisfies GetStaticPaths;
 
 const { breed } = Astro.params;
