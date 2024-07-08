@@ -12,7 +12,6 @@ var CatBreedsMap = map[string]string{
 	"russianBlue":      "russianBlue",
 	"abyssinian":       "abyssinian",
 	"norwegianForest":  "norwegianForest",
-	"devonRex":         "devonRex",
 	"burmese":          "burmese",
 	"bombay":           "bombay",
 }
