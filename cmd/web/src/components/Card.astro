@@ -1,15 +1,14 @@
 ---
 interface Props {
-	name: string
 	breed: string
 }
 
-const { name, breed } = Astro.props
+const { breed } = Astro.props
 ---
 
 <li class="border-2 border-slate-700 shadow-md w-44 h-max rounded text-center text-slate-800 bg-yellow-100 hover:cursor-pointer m-1">
-	<label class="font-bold block bg-amber-200" for="name">{name}
-		<span class="text-slate-700">({breed})</span>
-	</label>
-	<img class="w-1/2 mx-auto p-1" src={`./catsIcon/${breed}.png`} alt="cat-img">
+	<a href=`/cats/${breed}/chat`>
+		<label class="font-bold block bg-amber-200" for="name">{breed}</label>
+		<img class="w-1/2 mx-auto p-1" src={`./catsIcon/${breed}.png`} alt="cat-img">
+	</a>
 </li>
