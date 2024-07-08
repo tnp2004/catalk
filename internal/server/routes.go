@@ -20,6 +20,8 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("/", http.HandlerFunc(s.NotMatchRoutes))
 	v1.Handle("GET /db/health", http.HandlerFunc(s.dbHealthHandler))
 	v1.Handle("GET /server/health", http.HandlerFunc(s.ServerHealthHandler))
+
+	v1.Handle("GET /cats/breeds", http.HandlerFunc(s.CatBreeds))
 	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
 	return http.StripPrefix("/api/v1", v1)
