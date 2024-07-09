@@ -12,8 +12,14 @@ import Navbar from  "../components/Navbar.astro"
 		<meta name="generator" content={Astro.generator} />
 		<title>catalk</title>
 	</head>
-	<body>
+	<body class="bg-amber-100 bg-opacity-80">
 		<Navbar />
 		<slot />
 	</body>
 </html>
+
+<style>
+	body {
+		background-image: url("../../public/bg/catPattern.png");
+	}
+</style>
