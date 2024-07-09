@@ -7,7 +7,7 @@ const breedsRes = await res
 ---
 
 <Layout>
-    <ul class="p-1 w-1/2 mx-auto flex flex-wrap">
+    <ul class="my-3 p-1 w-1/2 mx-auto flex flex-wrap">
         {breedsRes.data.map(v => <Card breed={v} />)}
     </ul>
 </Layout>
