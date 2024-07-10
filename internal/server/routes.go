@@ -9,6 +9,7 @@ import (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
+
 	mux := http.NewServeMux()
 	mux.Handle("/api/v1/", s.apiV1())
 

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/rs/cors"
 
 	"catalk/internal/database"
 )
@@ -34,12 +35,18 @@ func NewServer() *ServerWrapper {
 		db: database.New(),
 	}
 
+	cors := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4321"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost},
+		AllowCredentials: true,
+	})
+
 	// Declare Server config
 	server := &ServerWrapper{
 		hostName: os.Getenv("HOST_NAME"),
 		httpServer: &http.Server{
 			Addr:         fmt.Sprintf(":%d", NewServer.port),
-			Handler:      NewServer.RegisterRoutes(),
+			Handler:      cors.Handler(NewServer.RegisterRoutes()),
 			IdleTimeout:  time.Minute,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 30 * time.Second,
