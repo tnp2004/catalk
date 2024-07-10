@@ -1,0 +1,10 @@
+---
+const { message, role } = Astro.props;
+---
+
+<li class=`flex justify-${role === "user" ? "end": "start"}`>
+    <label
+        class="border-2 border-slate-700 bg-slate-100 shadow-md rounded-full rounded-br-sm block p-2"
+        >{message}</label
+    >
+</li>
