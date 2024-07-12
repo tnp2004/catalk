@@ -2,7 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import type { GetStaticPaths } from "astro";
 import { CamelToWords } from "../../../utils/convertStringFormat";
-import { ChatBox } from "../../../components/ChatBox.tsx";
+import { ChatBox } from "../../../components/react/ChatBox.tsx";
 
 export const getStaticPaths = (async () => {
     const res: Promise<ResponseData<string[]>> = await (
@@ -17,7 +17,7 @@ const { breed } = Astro.params;
 
 <Layout>
     <div
-        class="bg-amber-100 border-4 border-slate-700 w-1/2 mx-auto my-10 rounded shadow-xl overflow-hidden px-1"
+        class="bg-amber-100 border-4 border-slate-600 w-1/2 mx-auto my-10 rounded drop-shadow-md overflow-hidden px-1"
     >
         <label class="font-bold pl-1 text-3xl" for="chat-title">{CamelToWords(breed)}</label>
       
