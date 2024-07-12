@@ -34,7 +34,7 @@ export const ChatBox = ({ breed }: { breed: string }) => {
 
     return (
         <>
-            <ul id="chat" className="h-[60vh] flex flex-col px-2 py-3 overflow-auto">
+            <ul className="h-[60vh] flex flex-col px-2 py-3 gap-2 overflow-auto">
                 {chat.map(({message, role}, i) => <MessageElement key={`${role}message-${i+1}`} message={message} role={role} />)}
             </ul>
             
