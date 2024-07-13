@@ -3,6 +3,7 @@ import Layout from "../../../layouts/Layout.astro";
 import type { GetStaticPaths } from "astro";
 import { CamelToWords } from "../../../utils/convertStringFormat";
 import { ChatBox } from "../../../components/react/ChatBox.tsx";
+import {Image} from "astro:assets";
 
 export const getStaticPaths = (async () => {
     const { PUBLIC_SERVER_API } = import.meta.env;
@@ -24,10 +25,11 @@ const { breed } = Astro.params;
             class="font-bold p-1 text-2xl gap-2 bg-amber-200 bg-opacity-80 flex drop-shadow-md h-10"
             for="chat-title"
         >
-                <img
-                    class="bg-slate-100 rounded-full w-14 h-14 p-0.5"
+                <Image
+                    class="bg-slate-100 drop-shadow-sm border-2 border-slate-300 rounded-full w-14 h-14 p-0.5"
                     src=`/catsIcon/${breed}.png`
                     alt="icon"
+                    width={56} height={56}
                 />
                 {CamelToWords(breed)}
         </label>
