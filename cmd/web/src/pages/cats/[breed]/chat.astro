@@ -5,7 +5,7 @@ import { CamelToWords } from "../../../utils/convertStringFormat";
 import { ChatBox } from "../../../components/react/ChatBox.tsx";
 
 export const getStaticPaths = (async () => {
-    const { PUBLIC_SERVER_API } = import.meta.env
+    const { PUBLIC_SERVER_API } = import.meta.env;
     const res: Promise<ResponseData<string[]>> = await (
         await fetch(`${PUBLIC_SERVER_API}/cats/breeds`)
     ).json();
@@ -18,11 +18,19 @@ const { breed } = Astro.params;
 
 <Layout>
     <div
-        class="bg-amber-100 border-4 border-slate-600 w-1/2 mx-auto my-10 rounded drop-shadow-md overflow-hidden px-1"
+        class="bg-amber-100 border-4 border-slate-600 w-1/2 mx-auto my-10 rounded drop-shadow-md overflow-y-auto"
     >
-        <label class="font-bold pl-1 text-3xl" for="chat-title">{CamelToWords(breed)}</label>
-      
+        <label
+            class="font-bold px-2 pt-1 gap-1 text-2xl bg-amber-200 bg-opacity-80 flex drop-shadow-md h-10"
+            for="chat-title"
+        >
+            <img
+                src=` /public/catsIcon//${breed}.png`
+                alt="icon"
+            />
+            {CamelToWords(breed)}</label
+        >
+
         <ChatBox breed={breed} client:only="react" />
-       
     </div>
 </Layout>

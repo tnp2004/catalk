@@ -8,7 +8,7 @@ interface Props {
 const { breed } = Astro.props
 ---
 
-<li class="border-2 border-slate-700 shadow-md w-44 h-max rounded text-center text-slate-800 bg-amber-100 hover:cursor-pointer m-1">
+<li class="border-4 border-slate-700 hover:border-dashed shadow-md w-44 h-max rounded text-center text-slate-800 bg-amber-100 hover:bg-amber-200 hover:cursor-pointer m-1">
 	<a href=`/cats/${breed}/chat`>
 		<label class="font-bold block bg-amber-200 bg-opacity-50" for="name">{CamelToWords(breed)}</label>
 		<img class="w-1/2 mx-auto p-1" src={`./catsIcon/${breed}.png`} alt="cat-img">
