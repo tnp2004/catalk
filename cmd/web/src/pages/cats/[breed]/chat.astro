@@ -21,15 +21,16 @@ const { breed } = Astro.params;
         class="bg-amber-100 border-4 border-slate-600 w-1/2 mx-auto my-10 rounded drop-shadow-md overflow-y-auto"
     >
         <label
-            class="font-bold px-2 pt-1 gap-1 text-2xl bg-amber-200 bg-opacity-80 flex drop-shadow-md h-10"
+            class="font-bold p-1 text-2xl gap-2 bg-amber-200 bg-opacity-80 flex drop-shadow-md h-10"
             for="chat-title"
         >
-            <img
-                src=`/catsIcon/${breed}.png`
-                alt="icon"
-            />
-            {CamelToWords(breed)}</label
-        >
+                <img
+                    class="bg-slate-100 rounded-full w-14 h-14 p-0.5"
+                    src=`/catsIcon/${breed}.png`
+                    alt="icon"
+                />
+                {CamelToWords(breed)}
+        </label>
 
         <ChatBox breed={breed} client:only="react" />
     </div>
