@@ -32,11 +32,17 @@ export const ChatBox = ({ breed }: { breed: string }) => {
         const res = await fetch(request);
         const bodyRes: ResponseData<MessageResponse> = await res.json();
         setChat(bodyRes.data.newMessageHistory)
+
+        // scroll down when message is comming
+        const chatBox = document.getElementById("box")!
+        chatBox.addEventListener("DOMSubtreeModified", () => {
+            chatBox.scrollTop = chatBox.scrollHeight
+        })
     };
 
     return (
         <>
-            <ul className="h-[60vh] flex flex-col px-2 py-3 gap-2 overflow-auto">
+            <ul id="box" className="h-[60vh] flex flex-col px-2 py-3 gap-2 overflow-y-auto scroll-smooth">
                 {chat.map(({ message, role }, i) => <MessageElement key={`${role}message-${i + 1}`} message={message} role={role} />)}
             </ul>
 
