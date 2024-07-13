@@ -4,6 +4,7 @@ import { MessageElement } from "../react/MessageElement";
 export const ChatBox = ({ breed }: { breed: string }) => {
     const [chat, setChat] = useState<MessageHistory[]>([])
     const [msgInput, setMsgInput] = useState<string>("")
+    const { PUBLIC_SERVER_API } = import.meta.env
 
     const SendMessageToAI = async (e: FormEvent) => {
         e.preventDefault();
@@ -16,9 +17,9 @@ export const ChatBox = ({ breed }: { breed: string }) => {
             messageHistory: chat,
             newUserMessage: msgInput,
         };
-
+        
         const request: RequestInfo = new Request(
-            `http://localhost:8080/api/v1/gemini/cats/${breed}`,
+            `${PUBLIC_SERVER_API}/gemini/cats/${breed}`,
             {
                 method: "POST",
                 headers: headers,
@@ -48,7 +49,7 @@ export const ChatBox = ({ breed }: { breed: string }) => {
                     required
                 />
                 <button className="rounded-r font-bold py-1 px-2 bg-slate-600 hover:bg-slate-700 text-slate-200 hover:text-slate-100" type="submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
                 </button>
             </form>
         </>

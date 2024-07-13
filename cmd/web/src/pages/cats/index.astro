@@ -2,7 +2,8 @@
 import Layout from "../../layouts/Layout.astro";
 import Card from "../../components/Card.astro";
 
-const res: Promise<ResponseData<string[]>> = await(await fetch("http://localhost:8080/api/v1/cats/breeds")).json()
+const { PUBLIC_SERVER_API } = import.meta.env
+const res: Promise<ResponseData<string[]>> = await(await fetch(`${PUBLIC_SERVER_API}/cats/breed`)).json()
 const breedsRes = await res
 ---
 
