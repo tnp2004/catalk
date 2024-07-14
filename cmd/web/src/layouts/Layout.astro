@@ -1,25 +1,29 @@
 ---
-import Navbar from  "../components/Navbar.astro"
+import Navbar from "../components/Navbar.astro";
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>catalk</title>
-	</head>
-	<body class="bg-amber-200 bg-opacity-20 text-slate-800">
-		<Navbar />
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>catalk</title>
+  </head>
+  <body class="bg-amber-200 bg-opacity-20 text-slate-800">
+    <Navbar />
+    <slot />
+  </body>
 </html>
 
 <style>
-	body {
-		background-image: url("/bg/catPattern.png");
-	}
+  @import url("https://fonts.googleapis.com/css2?family=Varela+Round&display=swap");
+  body {
+    background-image: url("/bg/catPattern.png");
+    font-family: "Varela Round", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
 </style>
