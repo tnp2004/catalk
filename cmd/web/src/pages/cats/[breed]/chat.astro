@@ -1,39 +1,46 @@
 ---
+import { getImage } from "astro:assets";
 import Layout from "../../../layouts/Layout.astro";
 import type { GetStaticPaths } from "astro";
 import { CamelToWords } from "../../../utils/convertStringFormat";
 import { ChatBox } from "../../../components/react/ChatBox.tsx";
-import {Image} from "astro:assets";
+import { Image } from "astro:assets";
 
 export const getStaticPaths = (async () => {
-    const { PUBLIC_SERVER_API } = import.meta.env;
-    const res: Promise<ResponseData<string[]>> = await (
-        await fetch(`${PUBLIC_SERVER_API}/cats/breeds`)
-    ).json();
-    const breedsRes = await res;
-    return breedsRes.data.map((v) => ({ params: { breed: v } }));
+  const { PUBLIC_SERVER_API } = import.meta.env;
+  const res: Promise<ResponseData<string[]>> = await (
+    await fetch(`${PUBLIC_SERVER_API}/cats/breeds`)
+  ).json();
+  const breedsRes = await res;
+  return breedsRes.data.map((v) => ({ params: { breed: v } }));
 }) satisfies GetStaticPaths;
 
 const { breed } = Astro.params;
+const icon = await getImage({ src: `/catsIcon/${breed}.png`, width: 56, height: 56})
 ---
 
 <Layout>
-    <div
-        class="bg-amber-100 bg-opacity-95 border-4 border-slate-600 w-1/2 mx-auto my-10 rounded drop-shadow-md overflow-y-auto"
+  <div class="bg-amber-100 bg-opacity-95 border-4 border-slate-600 w-1/2 mx-auto my-10 rounded drop-shadow-md">
+    
+    <a href="../" class="border-2 cursor-pointer border-slate-600 bg-amber-200 px-1 text-xl rounded-md absolute left-[-95px] top-0 flex">
+        <svg class="my-auto text-slate-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+         <span class="pt-0.5">Back</span>
+    </a>
+    
+    <label
+      class="font-bold p-1 text-2xl gap-2 bg-amber-200 bg-opacity-80 flex drop-shadow-md h-10"
+      for="chat-title"
     >
-        <label
-            class="font-bold p-1 text-2xl gap-2 bg-amber-200 bg-opacity-80 flex drop-shadow-md h-10"
-            for="chat-title"
-        >
-                <Image
-                    class="bg-slate-100 drop-shadow-sm border-2 border-slate-300 rounded-full w-14 h-14 p-0.5"
-                    src=`/catsIcon/${breed}.png`
-                    alt="icon"
-                    width={56} height={56}
-                />
-                {CamelToWords(breed)}
-        </label>
+      <Image
+        class="bg-slate-100 drop-shadow-sm border-2 border-slate-300 rounded-full w-14 h-14 p-0.5"
+        src={icon.src}
+        alt="icon"
+        width={56}
+        height={56}
+      />
+      {CamelToWords(breed)}
+    </label>
 
-        <ChatBox breed={breed} client:only="react" />
-    </div>
+    <ChatBox breed={breed} client:only="react" />
+  </div>
 </Layout>
