@@ -21,7 +21,7 @@ func (s *Server) ChatWithGeminiHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := ai.TextToGemini(reqBody, breed)
+	resp, err := ai.TextToGemini(reqBody, breed, s.config.Google.ApiKey)
 	if err != nil {
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return

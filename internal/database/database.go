@@ -1,6 +1,7 @@
 package database
 
 import (
+	"catalk/config"
 	"context"
 	"database/sql"
 	"fmt"
@@ -38,12 +39,12 @@ var (
 	dbInstance *service
 )
 
-func New() Service {
+func New(config *config.Database) Service {
 	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", username, password, host, port, database, schema)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", config.Username, config.Password, config.Host, config.Port, config.DbName, config.Schema)
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatal(err)
@@ -110,6 +111,6 @@ func (s *service) Health() map[string]string {
 // If the connection is successfully closed, it returns nil.
 // If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
-	log.Printf("Disconnected from database: %s", database)
+	log.Println("Disconnected from database")
 	return s.db.Close()
 }

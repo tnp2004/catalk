@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
@@ -14,8 +13,9 @@ import (
 
 var clientInstance *genai.Client
 
-func TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error) {
+func TextToGemini(req *GeminiRequest, breed string, apiKey string) (*GeminiResponse, error) {
 	breed, ok := instructions.CatBreedsMap[breed]
+
 	if !ok {
 		log.Printf("error %s breed isn't match", breed)
 		return nil, fmt.Errorf("%s breed isn't match", breed)
@@ -32,7 +32,7 @@ func TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error) {
 		return nil, fmt.Errorf("%s instruction not found", breed)
 	}
 
-	contentResp, err := sendMsgToGemini(req, instructions.MainInstruction, breedIns)
+	contentResp, err := sendMsgToGemini(req, instructions.MainInstruction, breedIns, apiKey)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +46,10 @@ func TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error) {
 	return resp, nil
 }
 
-func sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction string) ([]*MessageInfo, error) {
+func sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction string, apiKey string) ([]*MessageInfo, error) {
 	ctx := context.Background()
 
-	client, err := newAiClient(ctx)
+	client, err := newAiClient(ctx, apiKey)
 	if err != nil {
 		return nil, err
 	}
@@ -84,12 +84,12 @@ func sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction 
 	return resp, nil
 }
 
-func newAiClient(ctx context.Context) (*genai.Client, error) {
+func newAiClient(ctx context.Context, apiKey string) (*genai.Client, error) {
 	if clientInstance != nil {
 		return clientInstance, nil
 	}
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GOOGLE_API_KEY")))
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		log.Printf("error new gemini client. Err: %s", err.Error())
 		return nil, fmt.Errorf("new gemini client error: %s", err.Error())

@@ -7,19 +7,20 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/cors"
 
+	"catalk/config"
 	"catalk/internal/database"
 )
 
 type Server struct {
-	port int
-	db   database.Service
+	port   int
+	db     database.Service
+	config *config.Config
 }
 
 type ServerWrapper struct {
@@ -27,23 +28,23 @@ type ServerWrapper struct {
 	httpServer *http.Server
 }
 
-func NewServer() *ServerWrapper {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
+func NewServer(config *config.Config, database database.Service) *ServerWrapper {
 	NewServer := &Server{
-		port: port,
-
-		db: database.New(),
+		port:   config.Server.Port,
+		config: config,
+		db:     database,
 	}
 
+	webUrl := fmt.Sprintf("http://%s:%s", config.Web.HostName, config.Web.Port)
 	cors := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4321"},
+		AllowedOrigins:   []string{webUrl},
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost},
 		AllowCredentials: true,
 	})
 
 	// Declare Server config
 	server := &ServerWrapper{
-		hostName: os.Getenv("HOST_NAME"),
+		hostName: config.Server.HostName,
 		httpServer: &http.Server{
 			Addr:         fmt.Sprintf(":%d", NewServer.port),
 			Handler:      cors.Handler(NewServer.RegisterRoutes()),
