@@ -25,6 +25,10 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("GET /cats/breeds", http.HandlerFunc(s.CatBreeds))
 	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
+	//auth
+	v1.Handle("POST /auth/google/login", http.HandlerFunc(s.GoogleLogin))
+	v1.Handle("POST /auth/google/callback", http.HandlerFunc(s.GoogleCallback))
+
 	return http.StripPrefix("/api/v1", v1)
 }
 
