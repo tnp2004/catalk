@@ -34,6 +34,12 @@ type Database struct {
 
 type Google struct {
 	ApiKey string
+	OAuth  GoogleOAuth2
+}
+
+type GoogleOAuth2 struct {
+	ClientID     string
+	ClientSecret string
 }
 
 var (
