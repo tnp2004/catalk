@@ -1,6 +1,7 @@
 package server
 
 import (
+	"catalk/internal/auth/google"
 	"catalk/utils"
 	"encoding/json"
 	"fmt"
@@ -26,8 +27,8 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
 	//auth
-	v1.Handle("POST /auth/google/login", http.HandlerFunc(s.GoogleLogin))
-	v1.Handle("POST /auth/google/callback", http.HandlerFunc(s.GoogleCallback))
+	v1.Handle("GET /auth/google/login", http.HandlerFunc(google.GoogleLoginHandler))
+	v1.Handle("GET /auth/google/callback", http.HandlerFunc(google.GoogleCallbackHandler))
 
 	return http.StripPrefix("/api/v1", v1)
 }
