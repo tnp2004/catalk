@@ -30,6 +30,9 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("GET /auth/google/login", http.HandlerFunc(google.GoogleLoginHandler))
 	v1.Handle("GET /auth/google/callback", http.HandlerFunc(google.GoogleCallbackHandler))
 
+	//user
+	v1.Handle("POST /users", http.HandlerFunc(s.AddUser))
+
 	return http.StripPrefix("/api/v1", v1)
 }
 

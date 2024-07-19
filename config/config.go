@@ -24,12 +24,12 @@ type Server struct {
 }
 
 type Database struct {
-	Host     string
-	Port     string
-	DbName   string
-	Username string
-	Password string
-	Schema   string
+	Host         string
+	Port         string
+	DatabaseName string
+	Username     string
+	Password     string
+	Schema       string
 }
 
 type Google struct {

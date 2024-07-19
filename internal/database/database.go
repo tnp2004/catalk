@@ -26,7 +26,7 @@ type Service interface {
 }
 
 type service struct {
-	db *sql.DB
+	DB *sql.DB
 }
 
 var (
@@ -34,15 +34,15 @@ var (
 	once       sync.Once
 )
 
-func New(config *config.Database) Service {
+func New(config *config.Database) *service {
 	once.Do(func() {
-		connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", config.Username, config.Password, config.Host, config.Port, config.DbName, config.Schema)
+		connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", config.Username, config.Password, config.Host, config.Port, config.DatabaseName, config.Schema)
 		db, err := sql.Open("pgx", connStr)
 		if err != nil {
 			log.Fatal(err)
 		}
 		dbInstance = &service{
-			db: db,
+			DB: db,
 		}
 	})
 
@@ -58,7 +58,7 @@ func (s *service) Health() map[string]string {
 	stats := make(map[string]string)
 
 	// Ping the database
-	err := s.db.PingContext(ctx)
+	err := s.DB.PingContext(ctx)
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
@@ -71,7 +71,7 @@ func (s *service) Health() map[string]string {
 	stats["message"] = "It's healthy"
 
 	// Get database stats (like open connections, in use, idle, etc.)
-	dbStats := s.db.Stats()
+	dbStats := s.DB.Stats()
 	stats["open_connections"] = strconv.Itoa(dbStats.OpenConnections)
 	stats["in_use"] = strconv.Itoa(dbStats.InUse)
 	stats["idle"] = strconv.Itoa(dbStats.Idle)
@@ -106,5 +106,5 @@ func (s *service) Health() map[string]string {
 // If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
 	log.Println("Disconnected from database")
-	return s.db.Close()
+	return s.DB.Close()
 }
