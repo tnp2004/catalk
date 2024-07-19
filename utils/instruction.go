@@ -9,12 +9,13 @@ import (
 	"os"
 )
 
-var instructionsInstance *instructions.Instructions
+var instructionMap = make(map[string]*instructions.Instructions)
 
 func ReadInstructions(path string) (*instructions.Instructions, error) {
-	if instructionsInstance != nil {
-		return instructionsInstance, nil
+	if _, ok := instructionMap[path]; ok {
+		return instructionMap[path], nil
 	}
+
 	jsonFile, err := os.Open(path)
 	if err != nil {
 		log.Printf("error open instruction file. Err: %s", err.Error())
@@ -31,8 +32,8 @@ func ReadInstructions(path string) (*instructions.Instructions, error) {
 		log.Printf("error unmarshal body. Err: %s", err.Error())
 		return nil, fmt.Errorf("unmarshal failed")
 	}
-	instructionsInstance = ins
+	instructionMap[path] = ins
 
-	return instructionsInstance, nil
+	return instructionMap[path], nil
 
 }
