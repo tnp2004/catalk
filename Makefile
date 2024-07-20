@@ -6,12 +6,18 @@ all: build
 build:
 	@echo "Building..."
 	
-	
 	@go build -o main cmd/api/main.go
 
 # Run the application
 run:
 	@go run cmd/api/main.go
+
+# Migrate database
+migrate-up:
+	@migrate -database "postgres://postgres:password1234@localhost:5432/catalkdb?sslmode=disable" -path ./internal/database/migrations up
+
+migrate-down:
+	@migrate -database "postgres://postgres:password1234@localhost:5432/catalkdb?sslmode=disable" -path ./internal/database/migrations down
 
 # Create DB container
 docker-run:
