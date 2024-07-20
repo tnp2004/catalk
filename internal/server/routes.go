@@ -28,8 +28,9 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
 	//auth
-	v1.Handle("GET /auth/google/login", http.HandlerFunc(google.GoogleLoginHandler))
-	v1.Handle("GET /auth/google/callback", http.HandlerFunc(google.GoogleCallbackHandler))
+	googleOAuth := google.NewGoogleOAuth(google.GoogleConfig(), s.config.Google, s.config.Database)
+	v1.Handle("GET /auth/google/login", http.HandlerFunc(googleOAuth.GoogleLoginHandler))
+	v1.Handle("GET /auth/google/callback", http.HandlerFunc(googleOAuth.GoogleCallbackHandler))
 
 	//user
 	v1.Handle("POST /users", http.HandlerFunc(s.AddUser))
