@@ -12,11 +12,11 @@ import (
 type user struct {
 	dbConfig *config.Database
 }
-type UserRoutes interface {
+type UserService interface {
 	InsertUser(req *NewUserModel) error
 }
 
-func NewUser(config *config.Database) UserRoutes {
+func NewUser(config *config.Database) UserService {
 	return &user{dbConfig: config}
 }
 

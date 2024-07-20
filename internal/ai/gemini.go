@@ -1,19 +1,36 @@
 package ai
 
 import (
+	"catalk/config"
 	"catalk/instructions"
 	"catalk/utils"
 	"context"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
 )
 
-var clientInstance *genai.Client
+type ai struct {
+	googleConfig *config.Google
+}
 
-func TextToGemini(req *GeminiRequest, breed string, apiKey string) (*GeminiResponse, error) {
+type AiService interface {
+	TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error)
+}
+
+func NewAi(config *config.Google) AiService {
+	return &ai{googleConfig: config}
+}
+
+var (
+	clientInstance *genai.Client
+	once           sync.Once
+)
+
+func (a *ai) TextToGemini(req *GeminiRequest, breed string) (*GeminiResponse, error) {
 	breed, ok := instructions.CatBreedsMap[breed]
 
 	if !ok {
@@ -32,7 +49,7 @@ func TextToGemini(req *GeminiRequest, breed string, apiKey string) (*GeminiRespo
 		return nil, fmt.Errorf("%s instruction not found", breed)
 	}
 
-	contentResp, err := sendMsgToGemini(req, instructions.MainInstruction, breedIns, apiKey)
+	contentResp, err := a.sendMsgToGemini(req, instructions.MainInstruction, breedIns)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +63,10 @@ func TextToGemini(req *GeminiRequest, breed string, apiKey string) (*GeminiRespo
 	return resp, nil
 }
 
-func sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction string, apiKey string) ([]*MessageInfo, error) {
+func (a *ai) sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction string) ([]*MessageInfo, error) {
 	ctx := context.Background()
 
-	client, err := newAiClient(ctx, apiKey)
+	client, err := a.newAiClient(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -84,17 +101,21 @@ func sendMsgToGemini(req *GeminiRequest, mainInstruction string, subInstruction 
 	return resp, nil
 }
 
-func newAiClient(ctx context.Context, apiKey string) (*genai.Client, error) {
-	if clientInstance != nil {
-		return clientInstance, nil
-	}
+func (a *ai) newAiClient(ctx context.Context) (*genai.Client, error) {
+	var err error
+	once.Do(func() {
+		client, clientErr := genai.NewClient(ctx, option.WithAPIKey(a.googleConfig.ApiKey))
+		if err != nil {
+			log.Printf("error new gemini client. Err: %s", clientErr.Error())
+			err = fmt.Errorf("new gemini client failed")
+			return
+		}
+		clientInstance = client
+	})
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
-		log.Printf("error new gemini client. Err: %s", err.Error())
-		return nil, fmt.Errorf("new gemini client error: %s", err.Error())
+		return nil, err
 	}
-	clientInstance = client
 
 	return clientInstance, nil
 }
