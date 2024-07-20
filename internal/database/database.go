@@ -16,6 +16,8 @@ import (
 
 // Service represents a service that interacts with a database.
 type Service interface {
+	ConnectDB() (*sql.Conn, error)
+
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
@@ -47,6 +49,16 @@ func New(config *config.Database) *service {
 	})
 
 	return dbInstance
+}
+
+func (s *service) ConnectDB() (*sql.Conn, error) {
+	conn, err := s.DB.Conn(context.Background())
+	if err != nil {
+		log.Printf("error connect database. Error: %s", err.Error())
+		return nil, fmt.Errorf("connect database failed")
+	}
+
+	return conn, nil
 }
 
 // Health checks the health of the database connection by pinging the database.
