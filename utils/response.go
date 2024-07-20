@@ -42,3 +42,18 @@ func ErrorResponse(w http.ResponseWriter, status int, err error) {
 		ErrorResponse(w, http.StatusInternalServerError, fmt.Errorf("marshal body error"))
 	}
 }
+
+func MessageResponse(w http.ResponseWriter, status int, message string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	resp := make(map[string]string)
+	resp["message"] = message
+
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "	")
+	if err := encoder.Encode(resp); err != nil {
+		log.Printf("error marshal error response body. Err: %s", err.Error())
+		ErrorResponse(w, http.StatusInternalServerError, fmt.Errorf("marshal body error"))
+	}
+}
