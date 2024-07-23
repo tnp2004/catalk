@@ -21,8 +21,7 @@ func NewUser(config *config.Database) UserService {
 }
 
 func (u *user) InsertUser(req *NewUserModel) error {
-	config := config.GetConfig().Database
-	db := database.New(config)
+	db := database.New(u.dbConfig)
 	conn, err := db.ConnectDB()
 	if err != nil {
 		return err
