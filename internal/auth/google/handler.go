@@ -74,10 +74,20 @@ func (a *googleOAuth) GoogleCallbackHandler(w http.ResponseWriter, r *http.Reque
 		utils.ErrorResponse(w, http.StatusInternalServerError, fmt.Errorf("google callback failed"))
 		return
 	}
+
+	// check is user already register ?
+	user := users.NewUser(a.databaseConfig)
+	userData, err := user.FindUserByEmail(reqBody.Email)
+	if err == nil {
+		// already have an account
+		utils.MessageResponse(w, http.StatusOK, "login by: "+userData.Username)
+		return
+	}
+
+	// no account
 	// set provider id
 	reqBody.ProviderID = users.Provider.Google
 
-	user := users.NewUser(a.databaseConfig)
 	if err := user.InsertUser((*users.NewUserModel)(reqBody)); err != nil {
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return
