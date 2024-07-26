@@ -34,7 +34,6 @@ func (s *Server) apiV1() http.Handler {
 
 	// user
 	v1.Handle("POST /users", http.HandlerFunc(s.AddUser))
-	v1.Handle("GET /users/test", http.HandlerFunc(s.Test))
 
 	return http.StripPrefix("/api/v1", v1)
 }
