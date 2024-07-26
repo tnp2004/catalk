@@ -27,13 +27,14 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("GET /cats/breeds", http.HandlerFunc(s.CatBreeds))
 	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
-	//auth
+	// auth
 	googleOAuth := google.NewGoogleOAuth(google.GoogleConfig(), s.config.Google, s.config.Database)
 	v1.Handle("GET /auth/google/login", http.HandlerFunc(googleOAuth.GoogleLoginHandler))
 	v1.Handle("GET /auth/google/callback", http.HandlerFunc(googleOAuth.GoogleCallbackHandler))
 
-	//user
+	// user
 	v1.Handle("POST /users", http.HandlerFunc(s.AddUser))
+	v1.Handle("GET /users/test", http.HandlerFunc(s.Test))
 
 	return http.StripPrefix("/api/v1", v1)
 }
@@ -43,29 +44,16 @@ func (s *Server) NotMatchRoutes(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ServerHealthHandler(w http.ResponseWriter, r *http.Request) {
-	resp := make(map[string]string)
-	resp["message"] = "OK"
-
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Printf("error handling JSON marshal. Err: %s", err.Error())
-		utils.ErrorResponse(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResp)
+	utils.MessageResponse(w, http.StatusOK, "server health ok")
 }
 
 func (s *Server) dbHealthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(s.db.Health())
-
 	if err != nil {
 		log.Printf("error handling JSON marshal. Err: %s", err.Error())
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResp)
+	utils.SuccessResponse(w, http.StatusOK, jsonResp)
 }
