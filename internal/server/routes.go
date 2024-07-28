@@ -3,9 +3,7 @@ package server
 import (
 	"catalk/internal/auth/google"
 	"catalk/utils"
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -47,12 +45,5 @@ func (s *Server) ServerHealthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) dbHealthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, err := json.Marshal(s.db.Health())
-	if err != nil {
-		log.Printf("error handling JSON marshal. Err: %s", err.Error())
-		utils.ErrorResponse(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	utils.SuccessResponse(w, http.StatusOK, jsonResp)
+	utils.SuccessResponse(w, http.StatusOK, s.db.Health())
 }
