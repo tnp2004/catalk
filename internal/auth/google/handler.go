@@ -2,6 +2,7 @@ package google
 
 import (
 	"catalk/config"
+	"catalk/internal/auth/jwt"
 	"catalk/internal/users"
 	"catalk/utils"
 	"context"
@@ -20,6 +21,7 @@ type googleOAuth struct {
 	oauthConfig    oauth2.Config
 	googleConfig   *config.Google
 	databaseConfig *config.Database
+	jwtConfig      *config.JWT
 }
 
 type GoogleOAuthService interface {
@@ -27,8 +29,8 @@ type GoogleOAuthService interface {
 	GoogleCallbackHandler(w http.ResponseWriter, r *http.Request)
 }
 
-func NewGoogleOAuth(oauthConfig oauth2.Config, googleConfig *config.Google, databaseConfig *config.Database) GoogleOAuthService {
-	return &googleOAuth{oauthConfig, googleConfig, databaseConfig}
+func NewGoogleOAuth(oauthConfig oauth2.Config, googleConfig *config.Google, databaseConfig *config.Database, jwtConfig *config.JWT) GoogleOAuthService {
+	return &googleOAuth{oauthConfig, googleConfig, databaseConfig, jwtConfig}
 }
 
 func (a *googleOAuth) GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -75,23 +77,26 @@ func (a *googleOAuth) GoogleCallbackHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	// check is user already register ?
 	user := users.NewUser(a.databaseConfig)
 	userData, err := user.FindUserByEmail(reqBody.Email)
-	if err == nil {
-		// already have an account
-		utils.MessageResponse(w, http.StatusOK, "login by: "+userData.Username)
-		return
+	if err != nil {
+		// create account
+		reqBody.ProviderID = users.Provider.Google
+		if err := user.InsertUser((*users.NewUserModel)(reqBody)); err != nil {
+			utils.ErrorResponse(w, http.StatusInternalServerError, err)
+			return
+		}
 	}
 
-	// no account
-	// set provider id
-	reqBody.ProviderID = users.Provider.Google
-
-	if err := user.InsertUser((*users.NewUserModel)(reqBody)); err != nil {
+	// jwt token
+	ss, err := jwt.CreateJWTToken(a.jwtConfig, &users.NewUserModel{
+		Email:    userData.Email,
+		Username: userData.Username,
+	})
+	if err != nil {
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.MessageResponse(w, http.StatusCreated, "account has been created")
+	utils.MessageResponse(w, http.StatusOK, ss)
 }

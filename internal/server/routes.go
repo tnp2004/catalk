@@ -26,7 +26,7 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
 
 	// auth
-	googleOAuth := google.NewGoogleOAuth(google.GoogleConfig(), s.config.Google, s.config.Database)
+	googleOAuth := google.NewGoogleOAuth(google.GoogleConfig(), s.config.Google, s.config.Database, s.config.JWT)
 	v1.Handle("GET /auth/google/login", http.HandlerFunc(googleOAuth.GoogleLoginHandler))
 	v1.Handle("GET /auth/google/callback", http.HandlerFunc(googleOAuth.GoogleCallbackHandler))
 

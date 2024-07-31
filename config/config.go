@@ -2,6 +2,7 @@ package config
 
 import (
 	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -11,6 +12,7 @@ type Config struct {
 	Database *Database
 	Google   *Google
 	Web      *Web
+	JWT      *JWT
 }
 
 type Web struct {
@@ -30,6 +32,11 @@ type Database struct {
 	Username     string
 	Password     string
 	Schema       string
+}
+
+type JWT struct {
+	SecretKey      string
+	ExpireDuration time.Duration
 }
 
 type Google struct {
