@@ -52,6 +52,6 @@ func ValidateToken(jwtConfig *config.JWT, tokenString string) (*JWTUserData, err
 	}
 
 	return &JWTUserData{
-		ID: claims.ID,
+		ID: claims.Issuer,
 	}, nil
 }
