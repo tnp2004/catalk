@@ -89,14 +89,27 @@ func (a *googleOAuth) GoogleCallbackHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	// jwt token
-	ss, err := jwt.CreateJWTToken(a.jwtConfig, &users.NewUserModel{
-		Email:    userData.Email,
-		Username: userData.Username,
-	})
+	ss, err := jwt.CreateJWTToken(a.jwtConfig, userData)
 	if err != nil {
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.MessageResponse(w, http.StatusOK, ss)
+	setCookie(w, ss)
+
+	utils.MessageResponse(w, http.StatusOK, "login successfully")
+}
+
+func setCookie(w http.ResponseWriter, tokenString string) {
+	cookie := &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Path:     "/",
+		MaxAge:   3600,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, cookie)
 }

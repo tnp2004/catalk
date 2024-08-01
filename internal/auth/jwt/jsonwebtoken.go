@@ -4,6 +4,7 @@ import (
 	"catalk/config"
 	"catalk/internal/users"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,14 +12,16 @@ import (
 
 type JWTCustomClaims struct {
 	jwt.RegisteredClaims
-	Email string `json:"email"`
 }
 
-func CreateJWTToken(jwtConfig *config.JWT, userData *users.NewUserModel) (string, error) {
+type JWTUserData struct {
+	ID string
+}
+
+func CreateJWTToken(jwtConfig *config.JWT, userData *users.UserEntity) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTCustomClaims{
-		Email: userData.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   userData.Username,
+			Issuer:    userData.ID,
 			Audience:  []string{"user"},
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(jwtConfig.ExpireDuration * time.Second)),
@@ -27,8 +30,28 @@ func CreateJWTToken(jwtConfig *config.JWT, userData *users.NewUserModel) (string
 
 	ss, err := token.SignedString([]byte(jwtConfig.SecretKey))
 	if err != nil {
-		return "", fmt.Errorf("error sign jwt token. Error: %s", err.Error())
+		log.Printf("error sign jwt token. Error: %s", err.Error())
+		return "", fmt.Errorf("create jwt token failed")
 	}
 
 	return ss, nil
+}
+
+func ValidateToken(jwtConfig *config.JWT, tokenString string) (*JWTUserData, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &JWTCustomClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte(jwtConfig.SecretKey), nil
+	})
+	if err != nil {
+		log.Printf("erorr parse with claims token. Error: %s", err.Error())
+		return nil, fmt.Errorf("erorr validate token")
+	}
+
+	claims, ok := token.Claims.(*JWTCustomClaims)
+	if !ok {
+		return nil, fmt.Errorf("claims token failed")
+	}
+
+	return &JWTUserData{
+		ID: claims.ID,
+	}, nil
 }
