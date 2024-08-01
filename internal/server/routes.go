@@ -2,6 +2,7 @@ package server
 
 import (
 	"catalk/internal/auth/google"
+	"catalk/internal/auth/middleware"
 	"catalk/utils"
 	"fmt"
 	"net/http"
@@ -23,7 +24,7 @@ func (s *Server) apiV1() http.Handler {
 	v1.Handle("GET /server/health", http.HandlerFunc(s.ServerHealthHandler))
 
 	v1.Handle("GET /cats/breeds", http.HandlerFunc(s.CatBreeds))
-	v1.Handle("POST /gemini/cats/{breed}", http.HandlerFunc(s.ChatWithGeminiHandler))
+	v1.Handle("POST /gemini/cats/{breed}", middleware.Authorization(http.HandlerFunc(s.ChatWithGeminiHandler)))
 
 	// auth
 	googleOAuth := google.NewGoogleOAuth(google.GoogleConfig(), s.config.Google, s.config.Database, s.config.JWT)
