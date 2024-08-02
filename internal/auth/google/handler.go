@@ -82,10 +82,12 @@ func (a *googleOAuth) GoogleCallbackHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		// create account
 		reqBody.ProviderID = users.Provider.Google
-		if err := user.InsertUser((*users.NewUserModel)(reqBody)); err != nil {
+		userEntity, err := user.InsertUser((*users.NewUserModel)(reqBody))
+		if err != nil {
 			utils.ErrorResponse(w, http.StatusInternalServerError, err)
 			return
 		}
+		userData = userEntity
 	}
 
 	// jwt token

@@ -14,7 +14,7 @@ func (s *Server) AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := users.NewUser(s.config.Database)
-	if err := user.InsertUser(reqBody); err != nil {
+	if _, err := user.InsertUser(reqBody); err != nil {
 		utils.ErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
