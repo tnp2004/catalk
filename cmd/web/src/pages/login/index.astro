@@ -1,0 +1,20 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import GoogleIcon from "../../../public/providersIcon/google.png";
+import DiscordIcon from "../../../public/providersIcon/discord.png";
+---
+
+<Layout>
+  <div class="bg-amber-100 w-1/5 h-1/4 mx-auto my-32">
+    <div class="bg-amber-200 rounded-t-md p-1 text-center">
+      <label class="font-bold text-3xl" for="title">Login</label>
+    </div>
+    <ul class="p-2">
+      <li class="flex gap-3 justify-center bg-slate-100 hover:bg-slate-200 p-1 cursor-pointer border-2 border-slate-500 rounded">
+        <Image class="w-8 h-8" src={GoogleIcon} alt="icon" width={56} height={56} />
+        <label class="text-3xl my-auto" for="provider-title">Google</label>
+      </li>
+    </ul>
+  </div>
+</Layout>
